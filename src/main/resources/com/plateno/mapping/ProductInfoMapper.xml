@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.plateno.dao.mapper.ProductInfoMapper" >
+  <resultMap id="productInfoResultMap" type="com.plateno.dao.model.ProductInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="pName" property="pName" jdbcType="VARCHAR" />
+    <result column="pType" property="pType" jdbcType="VARCHAR" />
+    <result column="pPrice" property="pPrice" jdbcType="DOUBLE" />
+    <result column="pBrief" property="pBrief" jdbcType="VARCHAR" />
+    <result column="pStock" property="pStock" jdbcType="INTEGER" />
+  </resultMap>  
+</mapper>
