@@ -1,4 +1,4 @@
-package com.plateno.activemq.listener;
+package com.plateno.activemq.listener.queue;
 
 import javax.jms.JMSException;
 import javax.jms.Message;

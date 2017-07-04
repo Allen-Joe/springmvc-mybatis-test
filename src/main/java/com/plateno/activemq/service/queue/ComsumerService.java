@@ -1,4 +1,4 @@
-package com.plateno.activemq.service;
+package com.plateno.activemq.service.queue;
 
 import javax.annotation.Resource;
 import javax.jms.Destination;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ComsumerService {
 	
-	@Resource(name="jmsTemplate")
+	@Resource(name="queueJmsTemplate")
 	private JmsTemplate jmsTemplate;
 	
 	/**

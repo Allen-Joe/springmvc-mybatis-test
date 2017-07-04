@@ -23,7 +23,7 @@
   <!-- 真正可以产生Connection的ConnectionFactory，由对应的 JMS服务厂商提供-->  
   <!-- 如果连接网络：tcp://ip:61616；未连接网络：tcp://localhost:61616 以及用户名，密码-->
   <amq:connectionFactory id="amqConnectionFactory"
-   brokerURL="tcp://10.100.33.87:61616"
+   brokerURL="tcp://10.100.31.54:61616"
     userName="admin"
      password="admin"
   />   
@@ -46,12 +46,21 @@
         class="org.apache.activemq.command.ActiveMQQueue">
         <!-- 设置消息队列名称 -->
         <constructor-arg>
-          <value>activeMQDemo</value>
+          <value>activeMQQueueDemo</value>
+        </constructor-arg>
+  </bean>
+  
+  <!-- 定义消息主题（Topic） -->
+  <bean id="demoTopicDestination"
+        class="org.apache.activemq.command.ActiveMQTopic">
+        <!-- 设置消息队列名称 -->
+        <constructor-arg>
+          <value>activeMQTopicDemo</value>
         </constructor-arg>
   </bean>
   
   <!-- 配置jms模板（queue）,spring提供的JMS工具类，它发送和接受消息. -->
-  <bean id="jmsTemplate"
+  <bean id="queueJmsTemplate"
         class="org.springframework.jms.core.JmsTemplate">
      <property name="connectionFactory" ref="connectionFactory"/>
      <property name="defaultDestination" ref="demoQueueDestination"/>
@@ -61,18 +70,66 @@
      <property name="pubSubDomain" value="false"/>
   </bean>
   
+  <!-- 配置jms模板（topic）,spring提供的JMS工具类，它发送和接受消息. -->
+  <bean id="topicJmsTemplate"
+         class="org.springframework.jms.core.JmsTemplate">
+         <property name="connectionFactory" ref="connectionFactory"/>
+         <property name="defaultDestination" ref="demoTopicDestination"/>
+         <property name="receiveTimeout" value="10000"/>
+         
+         <!-- pub/sub模型（发布/订阅） -->
+         <property name="pubSubDomain" value="true"/>
+         <property name="explicitQosEnabled" value="true"/>
+  </bean>
+  
+  
   <!--Spring JmsTemplate 的消息生产者 end-->  
   
   <!-- 消息消费者 start-->  
   
+  <!-- Queue start -->
+  
   <!-- 配置消息队列监听者（Queue） -->
-  <bean id="queueMessageListener" class="com.plateno.activemq.listener.QueueMessageListener" />
+  <bean id="queueMessageListener" class="com.plateno.activemq.listener.queue.QueueMessageListener" />
   <!-- 显示注入消息监听容器（Queue）,配置连接工厂，监听的目标是上面定义的demoQueueDestination，监听器是上面定义的 queueMessageListener-->
   <bean id="queueListenerContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
        <property name="connectionFactory" ref="connectionFactory"/>
        <property name="destination" ref="demoQueueDestination"/>
        <property name="messageListener" ref="queueMessageListener"/>
   </bean>
+  
+  <!-- Queue end -->
+  
+  <!-- Topic start -->
+  
+  <!-- 配置消息队列监听者（Topic） -->
+  <bean id="myTopicMessageListener" class="com.plateno.activemq.listener.topic.TopicMessageListener"/>
+  <!-- 消息监听器 -->
+<!--   <bean id="topicMessageListener" class="org.springframework.jms.listener.adapter.MessageListenerAdapter">
+       <constructor-arg ref="myTopicMessageListener"/>
+       接受消息的方法名称
+       <property name="defaultListenerMethod" value="receive"/>
+       不进行消息转换
+       <property name="messageConverter"><null/></property>
+  
+  </bean> --> 
+  <!-- 消息监听容器 -->
+  <bean id="topicMessageListenerContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+      <property name="connectionFactory" ref="connectionFactory"/>
+      <!-- 发布订阅模式 -->
+      <property name="pubSubDomain" value="true"/>
+      <!-- 消息持久化 -->
+      <property name="subscriptionDurable" value="true"/>
+      <property name="receiveTimeout" value="10000"/>
+      <!-- 接受者ID -->
+      <property name="clientId" value="client_118"/>
+      <property name="durableSubscriptionName" value="client_118"/>
+      <property name="destination" ref="demoTopicDestination"/>
+      <property name="messageListener" ref="myTopicMessageListener"/>
+  
+  </bean>
+  
+  <!-- Topic end -->
   
   <!-- 消息消费者 end-->  
         

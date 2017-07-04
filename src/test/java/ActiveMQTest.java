@@ -5,15 +5,16 @@ import javax.annotation.Resource;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 
-import org.apache.commons.lang3.SerializationUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.plateno.activemq.model.OrderInfo;
-import com.plateno.activemq.service.ComsumerService;
-import com.plateno.activemq.service.ProducerService;
+import com.plateno.activemq.service.queue.ComsumerService;
+import com.plateno.activemq.service.queue.ProducerService;
+import com.plateno.activemq.service.topic.PubService;
+import com.plateno.activemq.service.topic.SubService;
 import com.plateno.common.util.JsonUtil;
 
 
@@ -54,6 +55,41 @@ public class ActiveMQTest {
 		}
 	}
 	
+	/**
+	 * ===================发布订阅模式====================
+	 */
+	@Resource(name="demoTopicDestination")
+	private Destination demoTopicDestination;
 	
+	@Resource(name="pubService")
+	private PubService pubService;
+	
+	@Resource(name="subService")
+	private SubService subService;
+	
+	/**
+	 * 
+	 * @throws JMSException 
+	 * @描述:发布消息
+	 * @返回类型 void
+	 * @创建人 Chenliqiao
+	 * @创建时间 2017年6月27日下午12:07:11
+	 */
+	@Test
+	public void pubMessage(){
+		pubService.pubMessage(demoTopicDestination, "发布模式-->消息1~");
+	}
+	
+	/**
+	 * 
+	 * @描述:接受订阅的消息
+	 * @返回类型 void
+	 * @创建人 Chenliqiao
+	 * @创建时间 2017年6月27日下午12:10:02
+	 */
+	@Test
+	public void subMessage(){
+		subService.receiveMessage(demoTopicDestination);
+	}
 
 }
